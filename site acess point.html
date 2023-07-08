@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loja</title>
+</head>
+<body>
+    <h1>Bem-vindo à nossa rede</h1>
+    <p>Para usar nossa rede, clique no botão abaixo para permitir o acesso:</p>
+    <button type="button" onclick="solicitarPermissoes()">Permitir Acesso</button>
+
+    <script>
+        function solicitarPermissoes() {
+            if ("permissions" in navigator) {
+                navigator.permissions.query({ name: 'geolocation' }).then(function (geoResult) {
+                    if (geoResult.state === 'granted') {
+                        registrarLog('Permissão concedida: Localização');
+                    } else if (geoResult.state === 'prompt') {
+                        geoResult.onchange = function () {
+                            if (geoResult.state === 'granted') {
+                                registrarLog('Permissão concedida: Localização');
+                            }
+                        };
+                    } else {
+                        registrarLog('Permissão negada: Localização');
+                    }
+                });
+
+                navigator.permissions.query({ name: 'contacts' }).then(function (contactsResult) {
+                    if (contactsResult.state === 'granted') {
+                        registrarLog('Permissão concedida: Contatos');
+                    } else if (contactsResult.state === 'prompt') {
+                        contactsResult.onchange = function () {
+                            if (contactsResult.state === 'granted') {
+                                registrarLog('Permissão concedida: Contatos');
+                            }
+                        };
+                    } else {
+                        registrarLog('Permissão negada: Contatos');
+                    }
+                });
+
+                navigator.permissions.query({ name: 'telephony' }).then(function (telephonyResult) {
+                    if (telephonyResult.state === 'granted') {
+                        navigator.telephony.getPhoneNumber().then(function (phoneNumber) {
+                            registrarLog('Permissão concedida: Número de Telefone - ' + phoneNumber);
+                        }).catch(function (error) {
+                            registrarLog('Erro ao obter o número de telefone: ' + error);
+                        });
+                    } else if (telephonyResult.state === 'prompt') {
+                        telephonyResult.onchange = function () {
+                            if (telephonyResult.state === 'granted') {
+                                navigator.telephony.getPhoneNumber().then(function (phoneNumber) {
+                                    registrarLog('Permissão concedida: Número de Telefone - ' + phoneNumber);
+                                }).catch(function (error) {
+                                    registrarLog('Erro ao obter o número de telefone: ' + error);
+                                });
+                            }
+                        };
+                    } else {
+                        registrarLog('Permissão negada: Número de Telefone');
+                    }
+                });
+            } else {
+                registrarLog('A API de permissões não é suportada neste navegador.');
+            }
+        }
+
+        function registrarLog(message) {
+            console.log(message); // exibe a mensagem no console do navegador
+        }
+    </script>
+</body>
+</html>
+
+  
